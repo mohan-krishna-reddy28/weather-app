@@ -70,15 +70,15 @@ document.getElementById('getWeatherBtn').addEventListener('click', function () {
     fetchWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
 });
 
-// Geolocation Button
+
 const locationBtn = document.getElementById("getLocationBtn");
-locationBtn.addEventListener("click", () => {
+locationBtn.addEventListener("click", function (){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             fetchWeather(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
-        }, () => {
+        }, function() {
             errorMsgEl.innerHTML = `<div class="alert alert-danger">Unable to retrieve your location.</div>`;
         });
     } else {

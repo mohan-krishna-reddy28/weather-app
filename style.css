@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
 .bg-image {
@@ -13,37 +14,50 @@ body {
 .bg-blur {
     backdrop-filter: blur(10px);
     background-color: rgba(33, 37, 41, 0.6);
-    /* Bootstrap bg-dark with opacity */
     border-radius: 1rem;
+    padding: 20px;
 }
 
-/* Curtain Overlay */
-#curtain {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-image: url("weather3.jpg");
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    transition: transform 0.8s ease-in-out;
-    overflow: hidden;
-    /* Arc shape */
-    border-bottom-left-radius: 50% 20% ;
-    border-bottom-right-radius: 50% 20%;
+/* Cards */
+#weatherResult .row {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
 }
 
-body.no-scroll {
-    overflow: hidden;
-}
-.curtain-content {
-    z-index: 2001;
+#weatherResult h1, #weatherResult h2, #weatherResult p, #weatherResult strong, #weatherResult div {
+    color: #f8f9fa;
 }
 
-#curtain.open {
-    transform: translateY(-100%);
+.btn ,input{
+  border-radius: 5px !important;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    cursor: pointer;
+    background-color: rgb(42, 42, 147);
+}
+
+/* Error Message */
+#errorMsg {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Spinner */
+#loadingSpinner {
+    margin-top: 20px;
+}
+
+/* Footer */
+footer {
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #weatherResult .d-flex {
+        flex-direction: column !important;
+        align-items: center;
+    }
 }

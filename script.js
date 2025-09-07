@@ -2,6 +2,7 @@ const apiKey = 'a1ce8e50f57b56c1e77634aa4f37ace4';
 let options = { method: 'GET' };
 
 let loadingSpinnerEl = document.getElementById('loadingSpinner');
+let errorMsgEl = document.getElementById('errorMsg');
 let cityNameEl = document.getElementById('cityName');
 let cityCountryEl = document.getElementById('cityCountry');
 let latitudeEl = document.getElementById('latitude');
@@ -38,45 +39,50 @@ function printAndUpdate(data) {
     sunsetEl.textContent = new Date(data.sys.sunset * 1000).toLocaleTimeString();
 }
 
+function fetchWeather(url) {
+    document.getElementById('weatherResult').classList.add('d-none');
+    errorMsgEl.innerHTML = "";
+    loadingSpinnerEl.classList.remove('d-none');
+
+    fetch(url, options)
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinnerEl.classList.add('d-none');
+            if (data.cod === 200) {
+                document.getElementById('weatherResult').classList.remove('d-none');
+                printAndUpdate(data);
+            } else {
+                errorMsgEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+            }
+        })
+        .catch(error => {
+            loadingSpinnerEl.classList.add('d-none');
+            errorMsgEl.innerHTML = `<div class="alert alert-danger">Error fetching data. ${error}</div>`;
+        });
+}
+
 document.getElementById('getWeatherBtn').addEventListener('click', function () {
     let city = document.getElementById('cityInput').value.trim();
     if (city === "") {
-        document.getElementById('weatherResult').innerHTML = `<div class="alert alert-danger">Please Enter a City.</div>`;
+        errorMsgEl.innerHTML = `<div class="alert alert-danger">Please enter a city.</div>`;
         return;
     }
+    fetchWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+});
 
-    document.getElementById('weatherResult').classList.add('d-none');
-    loadingSpinnerEl.classList.remove('d-none');
-
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`, options)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            document.getElementById('weatherResult').classList.remove('d-none');
-            loadingSpinnerEl.classList.add('d-none');
-            if (data.cod === 200) {
-                printAndUpdate(data);
-            } else {
-                document.getElementById('weatherResult').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-            }
-        })
-        .catch(function (error) {
-            document.getElementById('weatherResult').innerHTML = `<div class="alert alert-danger">Error fetching data. ${error}</div>`;
+// Geolocation Button
+const locationBtn = document.getElementById("getLocationBtn");
+locationBtn.addEventListener("click", () => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+        }, () => {
+            errorMsgEl.innerHTML = `<div class="alert alert-danger">Unable to retrieve your location.</div>`;
         });
+    } else {
+        errorMsgEl.innerHTML = `<div class="alert alert-danger">Geolocation is not supported by this browser.</div>`;
+    }
 });
-const enterBtn = document.getElementById("enterBtn");
-const curtain = document.getElementById("curtain");
-
-document.body.classList.add("no-scroll"); // lock scroll when curtain shows
-
-enterBtn.addEventListener("click", () => {
-  curtain.classList.add("open"); // animate curtain opening
-  document.body.classList.remove("no-scroll");
-  setTimeout(() => {
-    curtain.style.display = "none";
-  }, 1200);
-});
-
-
 
